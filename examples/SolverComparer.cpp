@@ -57,7 +57,8 @@
 #include <iostream>
 
 #ifdef GTSAM_USE_TBB
-#include <tbb/task_scheduler_init.h> // tbb::task_scheduler_init
+#include <tbb/task_arena.h> // tbb::task_arena
+#include <tbb/task_group.h> // tbb::task_group
 #endif
 
 using namespace std;
@@ -203,10 +204,11 @@ int main(int argc, char *argv[]) {
   }
 
 #ifdef GTSAM_USE_TBB
-  std::unique_ptr<tbb::task_scheduler_init> init;
+  tbb::task_arena arena;
+  tbb::task_group tg;
   if(nThreads > 0) {
     cout << "Using " << nThreads << " threads" << endl;
-    init.reset(new tbb::task_scheduler_init(nThreads));
+    arena.initialize(nThreads);
   } else
     cout << "Using threads for all processors" << endl;
 #else
@@ -216,6 +218,10 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
+#ifdef GTSAM_USE_TBB
+  arena.execute([&]{
+  tg.run([&]{
+#endif
   // Run mode
   if(incremental)
     runIncremental();
@@ -227,6 +233,10 @@ int main(int argc, char *argv[]) {
     runPerturb();
   else if(stats)
     runStats();
+#ifdef GTSAM_USE_TBB
+  });
+  });
+#endif
 
   return 0;
 }
