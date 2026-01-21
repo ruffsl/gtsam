@@ -31,3 +31,7 @@ doc/#*.lyx#
 .venv/
 conductor/
 .ccache/
+
+# Direnv
+.direnv/
+
