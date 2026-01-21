@@ -1,5 +1,5 @@
 {
-  description = "GTSAM python development environment";
+  description = "GTSAM: Georgia Tech Smoothing and Mapping library";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -17,37 +17,73 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          config = { allowUnfree = true; }; 
+          config.allowUnfree = true;
+          overlays = [ self.overlays.default ];
         };
-        python = pkgs.python314.withPackages (ps: [
-          ps.graphviz # not required, but used for example scripts
-          ps.jupyter # not required, but used for example scripts
-          ps.matplotlib # not required, but used for example scripts
-          ps.numpy # not required, but used for example scripts
-          ps.plotly # not required, but used for example scripts
-          ps.pybind11-stubgen # required for build, e.g., python bindings
-          ps.pyparsing # required for build, e.g., python bindings
-          ps.pytest # required for testing, e.g., make python-test
-        ]);
+        python = pkgs.python314;
       in
       {
-        devShell = pkgs.mkShell {
-          packages = with pkgs; [
-            ccache # not required, but helpful for faster development
-            cmake # required for build
-            cmakeWithGui # not required, but helpful ergonomic development
-            boost # optional build dependency
-            tbb # optional build dependency
-            mkl # optional build dependency
-            eigen # optional build dependency
-            lldb # not required, but helpful for debugging development
-            python # required for python bindings
+        # Packages
+        packages = {
+          default = pkgs.gtsam;
+          gtsam = pkgs.gtsam;
+          gtsam-python = pkgs.python314Packages.gtsam;
+        };
+
+        # Development shell for working on GTSAM itself
+        devShells.default = pkgs.mkShell {
+          packages = [
+            pkgs.ccache
+            pkgs.cmake
+            pkgs.cmakeWithGui
+            pkgs.boost
+            pkgs.tbb
+            pkgs.mkl
+            pkgs.eigen
+            pkgs.lldb
+            (python.withPackages (ps: [
+              ps.graphviz
+              ps.jupyter
+              ps.matplotlib
+              ps.numpy
+              ps.plotly
+              ps.pybind11-stubgen
+              ps.pyparsing
+              ps.pytest
+            ]))
           ];
-          # Environment variable to find python bindings for development
           shellHook = ''
             export PYTHONPATH="$PWD/build/python''${PYTHONPATH:+:$PYTHONPATH}"
           '';
         };
       }
-    );
+    )
+    // {
+      # Overlay for use in other flakes
+      overlays.default = final: prev: {
+        gtsam = final.callPackage ./nix/default.nix {
+          src = self;
+        };
+
+        # Add gtsam to each Python package set
+        python3Packages = prev.python3Packages.overrideScope (
+          pyFinal: pyPrev: {
+            gtsam = final.callPackage ./nix/python.nix {
+              inherit (pyFinal) python3 toPythonModule;
+              gtsam = final.gtsam;
+            };
+          }
+        );
+
+        python314Packages = prev.python314Packages.overrideScope (
+          pyFinal: pyPrev: {
+            gtsam = final.callPackage ./nix/python.nix {
+              python3 = final.python314;
+              inherit (pyFinal) toPythonModule;
+              gtsam = final.gtsam.override { python3 = final.python314; };
+            };
+          }
+        );
+      };
+    };
 }
