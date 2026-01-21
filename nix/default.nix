@@ -9,6 +9,7 @@
   tbb,
   enableBoostFeatures ? true,
   enableBoostSerialization ? true,
+  enableMarchNative ? false,
   enableMKL ? false,
   enablePython ? false,
   enableTBB ? true,
@@ -64,6 +65,8 @@ stdenv.mkDerivation {
     # Build options
     (lib.cmakeBool "GTSAM_BUILD_TESTS" doCheck)
     (lib.cmakeBool "GTSAM_BUILD_EXAMPLES_ALWAYS" false)
+    # Performance options
+    (lib.cmakeBool "GTSAM_BUILD_WITH_MARCH_NATIVE" enableMarchNative)
   ]
   ++ lib.optionals enablePython [
     (lib.cmakeBool "GTSAM_BUILD_PYTHON" true)

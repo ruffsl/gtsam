@@ -97,9 +97,10 @@ The GTSAM package supports these build options via `.override`:
 |--------|-------------|---------|
 | `enableBoostFeatures` | Enable Boost-based features | `true` |
 | `enableBoostSerialization` | Enable Boost serialization | `true` |
-| `enableTBB` | Enable Intel TBB parallelization | `true` |
+| `enableMarchNative` | Optimize for current CPU (not portable) | `false` |
 | `enableMKL` | Enable Intel MKL (requires `allowUnfree`) | `false` |
 | `enablePython` | Build Python bindings | `false` |
+| `enableTBB` | Enable Intel TBB parallelization | `true` |
 | `enableUnstable` | Build gtsam_unstable module | `true` |
 | `doCheck` | Run tests during build | `false` |
 

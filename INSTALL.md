@@ -366,7 +366,16 @@ cmake --build build --target python-test
 cmake --build build --target python-test-unstable
 ```
 
-Run gtsam tests:   
+Run gtsam tests:
 ```bash
 cmake --build build --target check
 ```
+
+## Building with Nix
+
+GTSAM provides a Nix flake for reproducible builds and development environments.
+
+See [nix/README.md](nix/README.md) for detailed instructions on:
+- Using GTSAM as a Nix package
+- Integrating GTSAM into other Nix flakes via overlay
+- Setting up a development environment with `nix develop`
