@@ -26,6 +26,7 @@
           ps.numpy
           ps.pybind11-stubgen
           ps.pyparsing
+          ps.pytest
         ]);
       in
       {
