@@ -1,8 +1,8 @@
 {
   lib,
+  gtsam,
   python3,
   toPythonModule,
-  gtsam,
 }:
 
 toPythonModule (

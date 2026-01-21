@@ -1,17 +1,17 @@
 {
   lib,
   stdenv,
+  boost,
   cmake,
   eigen,
-  boost,
-  tbb,
   mkl,
   python3,
+  tbb,
   enableBoostFeatures ? true,
   enableBoostSerialization ? true,
-  enableTBB ? true,
   enableMKL ? false,
   enablePython ? false,
+  enableTBB ? true,
   enableUnstable ? true,
   doCheck ? false,
   src,
@@ -20,8 +20,8 @@
 let
   pythonEnv = python3.withPackages (ps: [
     ps.numpy
-    ps.pyparsing
     ps.pybind11-stubgen
+    ps.pyparsing
   ]);
 in
 stdenv.mkDerivation {
@@ -42,8 +42,8 @@ stdenv.mkDerivation {
     eigen
   ]
   ++ lib.optional (enableBoostFeatures || enableBoostSerialization) boost
-  ++ lib.optional enableTBB tbb
-  ++ lib.optional enableMKL mkl;
+  ++ lib.optional enableMKL mkl
+  ++ lib.optional enableTBB tbb;
 
   propagatedBuildInputs = lib.optionals enablePython [
     python3.pkgs.numpy
