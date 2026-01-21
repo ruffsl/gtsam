@@ -1,19 +1,20 @@
-{ lib
-, stdenv
-, cmake
-, eigen
-, boost
-, tbb
-, mkl
-, python3
-, enableBoostFeatures ? true
-, enableBoostSerialization ? true
-, enableTBB ? true
-, enableMKL ? false
-, enablePython ? false
-, enableUnstable ? true
-, doCheck ? false
-, src
+{
+  lib,
+  stdenv,
+  cmake,
+  eigen,
+  boost,
+  tbb,
+  mkl,
+  python3,
+  enableBoostFeatures ? true,
+  enableBoostSerialization ? true,
+  enableTBB ? true,
+  enableMKL ? false,
+  enablePython ? false,
+  enableUnstable ? true,
+  doCheck ? false,
+  src,
 }:
 
 let
@@ -31,7 +32,8 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     cmake
-  ] ++ lib.optionals enablePython [
+  ]
+  ++ lib.optionals enablePython [
     pythonEnv
     python3.pkgs.pybind11
   ];
@@ -39,9 +41,9 @@ stdenv.mkDerivation {
   buildInputs = [
     eigen
   ]
-    ++ lib.optional (enableBoostFeatures || enableBoostSerialization) boost
-    ++ lib.optional enableTBB tbb
-    ++ lib.optional enableMKL mkl;
+  ++ lib.optional (enableBoostFeatures || enableBoostSerialization) boost
+  ++ lib.optional enableTBB tbb
+  ++ lib.optional enableMKL mkl;
 
   propagatedBuildInputs = lib.optionals enablePython [
     python3.pkgs.numpy
@@ -62,7 +64,8 @@ stdenv.mkDerivation {
     # Build options
     (lib.cmakeBool "GTSAM_BUILD_TESTS" doCheck)
     (lib.cmakeBool "GTSAM_BUILD_EXAMPLES_ALWAYS" false)
-  ] ++ lib.optionals enablePython [
+  ]
+  ++ lib.optionals enablePython [
     (lib.cmakeBool "GTSAM_BUILD_PYTHON" true)
     (lib.cmakeBool "GTSAM_UNSTABLE_BUILD_PYTHON" enableUnstable)
     "-DGTSAM_PYTHON_VERSION=${python3.pythonVersion}"
