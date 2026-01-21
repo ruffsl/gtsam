@@ -20,29 +20,30 @@
           config = { allowUnfree = true; }; 
         };
         python = pkgs.python314.withPackages (ps: [
-          ps.graphviz
-          ps.jupyter
-          ps.matplotlib
-          ps.numpy
-          ps.plotly
-          ps.pybind11-stubgen
-          ps.pyparsing
-          ps.pytest
+          ps.graphviz # not required, but used for example scripts
+          ps.jupyter # not required, but used for example scripts
+          ps.matplotlib # not required, but used for example scripts
+          ps.numpy # not required, but used for example scripts
+          ps.plotly # not required, but used for example scripts
+          ps.pybind11-stubgen # required for build, e.g., python bindings
+          ps.pyparsing # required for build, e.g., python bindings
+          ps.pytest # required for testing, e.g., make python-test
         ]);
       in
       {
         devShell = pkgs.mkShell {
           packages = with pkgs; [
-            ccache
-            cmake
-            cmakeWithGui
-            boost
-            tbb
-            mkl
-            eigen
-            lldb
-            python
+            ccache # not required, but helpful for faster development
+            cmake # required for build
+            cmakeWithGui # not required, but helpful ergonomic development
+            boost # optional build dependency
+            tbb # optional build dependency
+            mkl # optional build dependency
+            eigen # optional build dependency
+            lldb # not required, but helpful for debugging development
+            python # required for python bindings
           ];
+          # Environment variable to find python bindings for development
           shellHook = ''
             export PYTHONPATH="$PWD/build/python''${PYTHONPATH:+:$PYTHONPATH}"
           '';
