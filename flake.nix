@@ -24,6 +24,7 @@
           ps.jupyter
           ps.matplotlib
           ps.numpy
+          ps.plotly
           ps.pybind11-stubgen
           ps.pyparsing
           ps.pytest
